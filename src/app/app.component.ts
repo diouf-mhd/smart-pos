@@ -57,7 +57,6 @@ import { CartService } from './cart.service';
               />
               <button type="button" class="primary-btn" (click)="handleScan()">Ajouter</button>
             </div>
-            <div class="hint">Simulation : 111111, 222222</div>
           </div>
 
           <div class="card cart-panel" id="receipt-zone">
