@@ -164,9 +164,10 @@ import { CartService } from './cart.service';
       <footer class="footer">
         <div class="footer-profile">
           <strong>Smart POS Mobile & Desktop</strong>
-          <p>Moteur d'analyse optique optimisé</p>
+          <p>visiter mon profile : <a href="https://moussadioufportfolio.kesug.com" target="_blank" rel="noopener noreferrer">https://moussadioufportfolio.kesug.com</a>
+        </p>
+      
         </div>
-        <span class="version-pill">v2.0 Engine Pro</span>
       </footer>
     </div>
   `,
