@@ -10,13 +10,18 @@ import { CartService } from './cart.service';
   imports: [CommonModule, FormsModule, DatePipe],
   encapsulation: ViewEncapsulation.None, // Maintient l'accès global au fichier styles.css
   template: `
-    <div class="app-shell">
+    <div class="app-shell" [class.dark-theme]="isDarkMode()">
       <header class="topbar">
         <div class="topbar-left">
           <p class="eyebrow">Système POS Professionnel</p>
           <h1>Smart POS ⚡</h1>
         </div>
-        <div class="topbar-badge">{{ cartService.totalItems() }} art.</div>
+        <div class="topbar-actions">
+          <button type="button" class="theme-toggle-btn" (click)="toggleTheme()">
+            {{ isDarkMode() ? '☀️ Mode Clair' : '🌙 Mode Sombre' }}
+          </button>
+          <div class="topbar-badge">{{ cartService.totalItems() }} art.</div>
+        </div>
       </header>
 
       <nav class="tabs">
@@ -164,19 +169,18 @@ import { CartService } from './cart.service';
       <footer class="footer">
         <div class="footer-profile">
           <strong>Smart POS Mobile & Desktop</strong>
-          <p>visiter mon profile : <a href="https://moussadioufportfolio.kesug.com" target="_blank" rel="noopener noreferrer">https://moussadioufportfolio.kesug.com</a>
-        </p>
-      
+          <p>visiter mon profile : <a href="https://moussadioufportfolio.kesug.com" target="_blank" rel="noopener noreferrer">https://moussadioufportfolio.kesug.com</a></p>
         </div>
       </footer>
     </div>
   `,
-  styles: [] // 👈 Laissé vide volontairement car tout est géré par src/styles.css maintenant
+  styles: [] // Laissé vide volontairement car tout est géré par src/styles.css maintenant
 })
 export class AppComponent implements AfterViewInit {
   readonly cartService = inject(CartService);
   readonly activeTab = signal<'caisse' | 'historique'>('caisse');
   readonly isCameraActive = signal<boolean>(false);
+  readonly isDarkMode = signal<boolean>(false); // Signal pour gérer l'état du mode sombre
   barcodeInputValue = '';
 
   @ViewChild('barcodeInput') barcodeInput!: ElementRef<HTMLInputElement>;
@@ -201,6 +205,10 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.focusInput();
+  }
+
+  toggleTheme(): void {
+    this.isDarkMode.set(!this.isDarkMode());
   }
 
   toggleCamera(): void {
