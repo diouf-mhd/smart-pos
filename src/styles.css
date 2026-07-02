@@ -1,4 +1,6 @@
-/* --- CONFIGURATION DES THEMES (VARIABLES) --- */
+/* ==========================================================================
+   ⚡ CONFIGURATION DES THÈMES (VARIABLES CSS)
+   ========================================================================== */
 :root {
   --bg-app: #f1f5f9;
   --bg-card: #ffffff;
@@ -10,7 +12,7 @@
   --qr-bg: #fafafa;
 }
 
-/* Variables écrasées lorsque la classe .dark-theme est active */
+/* Surcharge des couleurs lorsque la classe .dark-theme est active */
 .app-shell.dark-theme {
   --bg-app: #0f172a;
   --bg-card: #1e293b;
@@ -22,12 +24,16 @@
   --qr-bg: #334155;
 }
 
-/* --- BASES & SHUNTS --- */
+/* ==========================================================================
+   ⚡ BASES & STRUCTURE GLOBALE
+   ========================================================================== */
 body { 
   margin: 0; 
   min-height: 100vh; 
-  font-family: 'Inter', system-ui, sans-serif; 
+  font-family: 'Inter', system-ui, -apple-system, sans-serif; 
   -webkit-font-smoothing: antialiased; 
+  background: var(--bg-app);
+  transition: background 0.3s ease;
 }
 
 .app-shell { 
@@ -43,7 +49,9 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* --- TOPBAR --- */
+/* ==========================================================================
+   ⚡ EN-TÊTE (TOPBAR)
+   ========================================================================== */
 .topbar { 
   background: var(--bg-card); 
   border: 1px solid var(--border-color); 
@@ -53,76 +61,93 @@ body {
   justify-content: space-between; 
   align-items: center; 
   margin-bottom: 16px; 
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 .topbar h1 { margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--text-main); }
 .eyebrow { margin: 0 0 2px; color: #2563eb; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.68rem; font-weight: 700; }
 .topbar-actions { display: flex; align-items: center; gap: 12px; }
 
-/* BOUTON SWITCH THEME */
+/* BOUTON CHANGEMENT DE THÈME */
 .theme-toggle-btn { 
   background: var(--bg-input); 
   color: var(--text-main); 
   border: 1px solid var(--border-color); 
-  padding: 6px 12px; 
+  padding: 8px 14px; 
   border-radius: 8px; 
   font-weight: 600; 
   font-size: 0.8rem; 
   cursor: pointer; 
+  transition: background 0.2s, border-color 0.2s;
+}
+.theme-toggle-btn:hover {
+  background: var(--border-color);
 }
 .topbar-badge { padding: 6px 12px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; border-radius: 999px; font-weight: 700; font-size: 0.8rem; white-space: nowrap; }
 
-/* --- TABS --- */
+/* ==========================================================================
+   ⚡ NAVIGATION TABS
+   ========================================================================== */
 .tabs { display: inline-flex; background: var(--tab-bg); padding: 4px; border-radius: 10px; margin-bottom: 16px; gap: 4px; width: 100%; box-sizing: border-box; }
-.tabs button { flex: 1; border: 0; background: transparent; padding: 10px; font-weight: 600; color: var(--text-muted); border-radius: 6px; cursor: pointer; text-align: center; font-size: 0.85rem; }
-.tabs button.active { background: var(--bg-card); color: #2563eb; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.tabs button { flex: 1; border: 0; background: transparent; padding: 10px; font-weight: 600; color: var(--text-muted); border-radius: 6px; cursor: pointer; text-align: center; font-size: 0.85rem; transition: all 0.2s ease; }
+.tabs button.active { background: var(--bg-card); color: #2563eb; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
 
-/* --- CARDS & GRID --- */
+/* ==========================================================================
+   ⚡ GRILLE DE LA CAISSE & CARTES
+   ========================================================================== */
 .view-container { position: relative; min-height: 450px; width: 100%; }
 .slide-view { position: absolute; top: 0; left: 0; width: 100%; box-sizing: border-box; opacity: 0; visibility: hidden; transform: translateX(15px); transition: transform 0.25s ease, opacity 0.25s ease; }
 .slide-view.active { position: relative; opacity: 1; visibility: visible; transform: translateX(0); }
+
 .caisse-grid { display: grid; grid-template-columns: 1fr 1.1fr 1.1fr; gap: 16px; width: 100%; }
-.card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; min-width: 0; box-sizing: border-box; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+.card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; min-width: 0; box-sizing: border-box; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); transition: background 0.3s ease, border-color 0.3s ease; }
 .card h2, .card h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
 .card-desc { font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0 0; line-height: 1.3; }
 
-/* --- CAMERA & LAYOUT --- */
-.scan-button { width: 100%; border: 0; padding: 14px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border-radius: 10px; font-weight: 700; font-size: 0.9rem; margin: 12px 0; cursor: pointer; }
-.scan-button.cam-active { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+/* ==========================================================================
+   ⚡ ZONE SCANNER & VIDÉO CAPTEUR
+   ========================================================================== */
+.scan-button { width: 100%; border: 0; padding: 14px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border-radius: 10px; font-weight: 700; font-size: 0.9rem; margin: 12px 0; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+.scan-button.cam-active { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
+
 .camera-wrapper { position: relative; width: 100%; border-radius: 10px; overflow: hidden; background: #000000; margin-bottom: 12px; aspect-ratio: 4/3; border: 2px solid #2563eb; }
-.camera-wrapper video { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.4) brightness(0.9); }
-.scanner-target-zone { position: absolute; top: 30%; left: 10%; width: 80%; height: 40%; border: 2px dashed rgba(255, 255, 255, 0.6); border-radius: 6px; pointer-events: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4); }
+.camera-wrapper video { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.3) brightness(0.95); }
+.scanner-target-zone { position: absolute; top: 30%; left: 10%; width: 80%; height: 40%; border: 2px dashed rgba(255, 255, 255, 0.7); border-radius: 6px; pointer-events: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4); }
 .scanner-laser { position: absolute; top: 50%; left: 12%; width: 76%; height: 2px; background-color: #ef4444; box-shadow: 0 0 8px #ef4444; animation: laserMove 1.5s infinite alternate ease-in-out; }
 @keyframes laserMove { from { top: 32%; } to { top: 68%; } }
 
-/* --- SQUASH INPUTS --- */
+/* CHAMPS DE SAISIE */
 .scan-row { display: flex; gap: 8px; width: 100%; }
-input { flex: 1; border: 2px solid var(--border-color); background: var(--bg-input); padding: 10px 12px; border-radius: 8px; color: var(--text-main); font-weight: 500; min-width: 0; font-size: 0.9rem; }
-input:focus { outline: none; border-color: #2563eb; background: var(--bg-card); }
-.primary-btn { background: #2563eb; color: white; border: 0; padding: 0 14px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+input { flex: 1; border: 2px solid var(--border-color); background: var(--bg-input); padding: 10px 12px; border-radius: 8px; color: var(--text-main); font-weight: 500; min-width: 0; font-size: 0.9rem; transition: all 0.2s; }
+input:focus { outline: none; border-color: #2563eb; background: var(--bg-card); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+.primary-btn { background: #2563eb; color: white; border: 0; padding: 0 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-/* --- PANIER LIST --- */
+/* ==========================================================================
+   ⚡ GESTION DU PANIER (RECEIPT ZONE)
+   ========================================================================== */
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.items-count { background: var(--bg-app); color: var(--text-main); padding: 2px 6px; font-size: 0.75rem; border-radius: 4px; font-weight: 600; }
+.items-count { background: var(--bg-app); color: var(--text-main); padding: 2px 8px; font-size: 0.75rem; border-radius: 4px; font-weight: 600; }
 .cart-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; margin-bottom: 12px; }
 .cart-item { background: var(--bg-input); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; min-width: 0; }
 .item-info { flex: 1; min-width: 0; }
 .item-name { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem; color: var(--text-main); }
 .small-price { font-size: 0.75rem; color: var(--text-muted); margin-top: 1px; }
+
 .item-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .quantity-counter { display: inline-flex; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; padding: 1px; }
-.qty-btn { background: transparent; border: 0; width: 22px; height: 22px; font-weight: 700; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.qty-btn { background: transparent; border: 0; width: 24px; height: 24px; font-weight: 700; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .qty-val { font-size: 0.8rem; font-weight: 700; min-width: 18px; text-align: center; color: var(--text-main); }
 .delete-btn { background: transparent; border: 0; cursor: pointer; font-size: 0.9rem; }
 
-.summary { margin-top: auto; border-top: 2px dashed var(--border-color); padding-top: 10px; }
+.summary { margin-top: auto; border-top: 2px dashed var(--border-color); padding-top: 12px; }
 .summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
 .total-price { font-size: 1.15rem; color: #10b981; font-weight: 800; }
 
-/* --- PAIEMENT --- */
+/* ==========================================================================
+   ⚡ INTERFACE DE PAIEMENT
+   ========================================================================== */
 .qr-payment-card { background: var(--qr-bg); border: 2px dashed var(--border-color); align-items: center; justify-content: center; text-align: center; }
-.qr-payment-card.disabled { opacity: 0.4; pointer-events: none; }
-.qr-wrapper { position: relative; background: #ffffff; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+.qr-payment-card.disabled { opacity: 0.35; pointer-events: none; }
+.qr-wrapper { position: relative; background: #ffffff; padding: 12px; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
 .qr-placeholder { width: 110px; height: 110px; position: relative; background: #f8fafc; margin: 0 auto; }
 .qr-square { position: absolute; width: 24px; height: 24px; border: 4px solid #0f172a; }
 .corner-tl { top: 4px; left: 4px; }
@@ -130,9 +155,11 @@ input:focus { outline: none; border-color: #2563eb; background: var(--bg-card); 
 .corner-bl { bottom: 4px; left: 4px; }
 .qr-center-pattern { position: absolute; top: 38px; left: 38px; width: 34px; height: 34px; background: repeating-linear-gradient(45deg, #0f172a, #0f172a 3px, transparent 3px, transparent 6px); }
 .qr-amount-overlay { margin-top: 6px; font-size: 0.8rem; font-weight: 700; background: #f1f5f9; color: #0f172a; padding: 2px 6px; border-radius: 4px; display: inline-block; }
-.checkout-btn { width: 100%; background: #10b981; color: white; border: 0; padding: 12px; font-weight: 700; font-size: 0.9rem; border-radius: 10px; cursor: pointer; }
+.checkout-btn { width: 100%; background: #10b981; color: white; border: 0; padding: 12px; font-weight: 700; font-size: 0.9rem; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
 
-/* --- HISTORIQUE --- */
+/* ==========================================================================
+   ⚡ MODULE HISTORIQUE DES TRANSACTIONS
+   ========================================================================== */
 .history-panel { background: var(--bg-card); padding: 16px; border-radius: 12px; box-sizing: border-box; }
 .card-header-full { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .history-badge { background: #2563eb; color: white; font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
@@ -145,37 +172,116 @@ input:focus { outline: none; border-color: #2563eb; background: var(--bg-card); 
 .empty-state { text-align: center; padding: 40px 0; color: var(--text-muted); }
 .empty-icon { font-size: 2rem; display: block; margin-bottom: 4px; }
 
-/* --- FOOTER --- */
-.footer { margin-top: 20px; background: #0f172a; color: white; padding: 12px 16px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
-.footer-profile strong { display: block; font-size: 0.85rem; }
-.footer-profile p { margin: 2px 0 0 0; font-size: 0.75rem; color: #94a3b8; }
-.version-pill { background: rgba(255,255,255,0.1); color: #38bdf8; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+/* ==========================================================================
+   ⚡ FOOTER STYLISÉ
+   ========================================================================== */
+.footer { margin-top: 24px; background: #0f172a; color: white; padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
+.footer-profile strong { display: block; font-size: 0.85rem; color: #f8fafc; }
+.footer-profile p { margin: 4px 0 0 0; font-size: 0.8rem; color: #94a3b8; }
+.footer-profile a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+.footer-profile a:hover { text-decoration: underline; }
 
-/* --- MEDIA QUERIES --- */
+/* ==========================================================================
+   ⚡ RESPONSIVE DESIGN (TABLETTES & PHONES)
+   ========================================================================== */
 @media (max-width: 1024px) {
   .caisse-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .qr-payment-card { grid-column: span 2; }
 }
+
 @media (max-width: 680px) {
   .caisse-grid { grid-template-columns: 1fr; gap: 12px; width: 100%; }
   .qr-payment-card { grid-column: span 1; }
   .footer { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
 
-/* --- IMPRESSION NETTOYÉE --- */
+/* ==========================================================================
+   ⚡ FIX STRIC POUR L'IMPRESSION DU REÇU BLANC (MOBILE ANDROID & PC)
+   ========================================================================== */
 @media print {
-  body * { visibility: hidden; }
-  #receipt-zone, #receipt-zone * { visibility: visible; }
-  #receipt-zone { position: absolute; top: 0; left: 0; width: 54mm; margin: 0; padding: 4mm; border: none !important; box-shadow: none !important; background: #ffffff !important; color: #000000 !important; }
-  body { background: #ffffff; font-family: 'Courier New', monospace; font-size: 12px; }
-  #receipt-zone .card-header h3 { font-size: 13px; text-align: center; margin-bottom: 8px; color: #000000 !important; }
-  #receipt-zone .card-header h3::before { content: "✨ TOUBA SMART SHOP ✨\A Dakar, Sénégal\A --------------------------\A"; white-space: pre-wrap; display: block; }
-  #receipt-zone .items-count { display: none !important; }
-  .cart-list { max-height: none !important; overflow: visible !important; display: flex !important; flex-direction: column !important; }
-  .cart-item { background: transparent !important; border: none !important; border-bottom: 1px dashed #000000 !important; padding: 4px 0 !important; display: flex !important; justify-content: space-between !important; color: #000000 !important; }
-  .item-controls .quantity-counter, .delete-btn { display: none !important; }
-  .qty-val::before { content: "x"; }
-  .summary { border-top: 1px solid #000000 !important; margin-top: 8px; padding-top: 4px; }
-  .total-price { font-size: 13px; color: #000000 !important; font-weight: bold; }
-  .summary-row::after { content: "\A --------------------------\A Merci pour votre visite !"; white-space: pre-wrap; display: block; text-align: center; font-size: 10px; margin-top: 10px; }
+  /* On réinitialise complètement l'affichage des conteneurs parents */
+  html, body, .app-shell, .view-container, .panel, .caisse-grid {
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  /* Cache tous les éléments de l'écran par défaut */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Force la visibilité absolue uniquement pour le ticket de caisse */
+  #receipt-zone, 
+  #receipt-zone * {
+    visibility: visible !important;
+  }
+
+  /* Positionnement fixe en haut à gauche du format papier d'impression */
+  #receipt-zone {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 58mm !important; /* Format ticket thermique standard */
+    margin: 0 !important;
+    padding: 4mm !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    display: block !important;
+  }
+
+  /* Paramétrage de la police d'impression type ticket de caisse */
+  body {
+    background: #ffffff;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+  }
+
+  #receipt-zone h3, 
+  #receipt-zone .item-name, 
+  #receipt-zone .qty-val, 
+  #receipt-zone .small-price, 
+  #receipt-zone .total-price {
+    color: #000000 !important;
+  }
+
+  /* Retrait des boutons d'actions et badges lors de l'impression */
+  #receipt-zone .items-count,
+  #receipt-zone .qty-btn,
+  #receipt-zone .delete-btn {
+    display: none !important;
+  }
+
+  /* Déroulement complet de la liste des articles sans scrollbar */
+  .cart-list {
+    max-height: none !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .cart-item {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px dashed #000000 !important;
+    padding: 6px 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  .summary {
+    border-top: 1px dashed #000000 !important;
+    margin-top: 12px !important;
+    padding-top: 6px !important;
+  }
 }
