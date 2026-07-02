@@ -198,70 +198,53 @@ input:focus { outline: none; border-color: #2563eb; background: var(--bg-card); 
 /* ==========================================================================
    ⚡ FIX STRIC POUR L'IMPRESSION DU REÇU BLANC (MOBILE ANDROID & PC)
    ========================================================================== */
+/* ==========================================================================
+   ⚡ FIX IMPRESSION REÇU BLANC ANDROID & MOBILE 
+   ========================================================================== */
 @media print {
-  /* On réinitialise complètement l'affichage des conteneurs parents */
+  /* 1. Masquer les conteneurs parents complexes et composants superflus */
+  .topbar, .tabs, .hero-card, .qr-payment-card, .footer, .qty-btn, .delete-btn, .items-count {
+    display: none !important;
+  }
+
+  /* 2. Réinitialisation complète de la structure pour le moteur d'impression */
   html, body, .app-shell, .view-container, .panel, .caisse-grid {
     background: #ffffff !important;
     color: #000000 !important;
-    box-shadow: none !important;
     margin: 0 !important;
     padding: 0 !important;
     height: auto !important;
-    min-height: 0 !important;
     overflow: visible !important;
     display: block !important;
+    box-shadow: none !important;
   }
 
-  /* Cache tous les éléments de l'écran par défaut */
-  body * {
-    visibility: hidden;
-  }
-
-  /* Force la visibilité absolue uniquement pour le ticket de caisse */
-  #receipt-zone, 
-  #receipt-zone * {
-    visibility: visible !important;
-  }
-
-  /* Positionnement fixe en haut à gauche du format papier d'impression */
+  /* 3. Forcer l'affichage brut et propre du reçu */
   #receipt-zone {
+    display: block !important;
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    max-width: 58mm !important; /* Format ticket thermique standard */
-    margin: 0 !important;
+    max-width: 60mm !important; /* Largeur optimale ticket de caisse thermique */
     padding: 4mm !important;
+    margin: 0 !important;
     border: none !important;
     box-shadow: none !important;
     background: #ffffff !important;
     color: #000000 !important;
-    display: block !important;
   }
 
-  /* Paramétrage de la police d'impression type ticket de caisse */
+  /* Typographie propre au format ticket */
   body {
-    background: #ffffff;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
+    font-family: 'Courier New', monospace !important;
+    font-size: 12px !important;
   }
 
-  #receipt-zone h3, 
-  #receipt-zone .item-name, 
-  #receipt-zone .qty-val, 
-  #receipt-zone .small-price, 
-  #receipt-zone .total-price {
+  #receipt-zone h3, .item-name, .qty-val, .small-price, .total-price {
     color: #000000 !important;
   }
 
-  /* Retrait des boutons d'actions et badges lors de l'impression */
-  #receipt-zone .items-count,
-  #receipt-zone .qty-btn,
-  #receipt-zone .delete-btn {
-    display: none !important;
-  }
-
-  /* Déroulement complet de la liste des articles sans scrollbar */
   .cart-list {
     max-height: none !important;
     overflow: visible !important;
@@ -281,7 +264,7 @@ input:focus { outline: none; border-color: #2563eb; background: var(--bg-card); 
 
   .summary {
     border-top: 1px dashed #000000 !important;
-    margin-top: 12px !important;
+    margin-top: 10px !important;
     padding-top: 6px !important;
   }
 }

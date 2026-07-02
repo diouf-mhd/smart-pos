@@ -8,7 +8,7 @@ import { CartService } from './cart.service';
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, FormsModule, DatePipe],
-  encapsulation: ViewEncapsulation.None, // Maintient l'accès global au fichier styles.css
+  encapsulation: ViewEncapsulation.None, // Indispensable pour maintenir l'accès aux règles d'impression globales
   template: `
     <div class="app-shell" [class.dark-theme]="isDarkMode()">
       <header class="topbar">
@@ -174,13 +174,13 @@ import { CartService } from './cart.service';
       </footer>
     </div>
   `,
-  styles: [] // Laissé vide volontairement car tout est géré par src/styles.css maintenant
+  styles: []
 })
 export class AppComponent implements AfterViewInit {
   readonly cartService = inject(CartService);
   readonly activeTab = signal<'caisse' | 'historique'>('caisse');
   readonly isCameraActive = signal<boolean>(false);
-  readonly isDarkMode = signal<boolean>(false); // Signal pour gérer l'état du mode sombre
+  readonly isDarkMode = signal<boolean>(false);
   barcodeInputValue = '';
 
   @ViewChild('barcodeInput') barcodeInput!: ElementRef<HTMLInputElement>;
@@ -219,6 +219,7 @@ export class AppComponent implements AfterViewInit {
     if (!this.previewVideo?.nativeElement) return;
 
     try {
+      // Retour à tes paramètres initiaux exacts qui rendaient le scan très net
       const customConstraints: MediaStreamConstraints = {
         video: {
           facingMode: { ideal: 'environment' },
