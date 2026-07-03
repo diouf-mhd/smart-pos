@@ -18,7 +18,7 @@ export class CartService {
   // 2. LE CATALOGUE DU CLIENT : C'est ici que tu mets les produits qu'il te donne !
   private productCatalog: Product[] = [
     { id: '6043000034907', name: 'creme de peau Happy family', price: 1500 },
-    { id: '222222', name: 'Eau Kirène 1.5L', price: 400 },
+    { id: '6987000861005', name: 'Cahier 100 pages', price: 250 },
     { id: '333333', name: 'Café Touba Sac', price: 1000 },
     { id: '444444', name: 'Lait en poudre Presto', price: 2500 },
     // Quand ton client te donne sa liste, tu as juste à ajouter des lignes ici :
