@@ -39,7 +39,7 @@ import { CartService } from './cart.service';
         </button>
       </nav>
 
-      <!-- ZONE D'IMPRESSION DU REÇU (CACHÉE À L'ÉCRAN, VISIBLE UNIQUEMENT À L'IMPRESSION) -->
+      <!-- ZONE D'IMPRESSION DU REÇU -->
       <div id="receipt-print-zone" class="print-only">
         <div class="receipt-header">
           <h2>WEUZ.SHOP</h2>
@@ -93,37 +93,32 @@ import { CartService } from './cart.service';
 
       <div class="view-container">
         
-        <!-- ================= ONGLET 1 : CAISSE (ACCUEIL EN BLOCS ÉPURÉS) ================= -->
+        <!-- ================= ONGLET 1 : CAISSE (ACCUEIL EN BLOCS ÉPURÉS COMPACTS) ================= -->
         <section class="panel caisse-grid slide-view" [class.active]="activeTab() === 'caisse'">
           
-          <!-- BLOC DE SAISIE ET SCAN (Inspiré de la netteté de l'image 274736.jpg) -->
+          <!-- BLOC DE SAISIE ET SCAN (Version ultra-compacte) -->
           <div class="card premium-block no-print">
             <div class="block-indicator indigo-dot"></div>
-            <h3>Scanner & Recherche</h3>
-            <p class="card-desc">Centrez le code-barres dans la zone ou utilisez la recherche manuelle rapide.</p>
-
-            <button type="button" class="scan-button-modern" [class.cam-active]="isCameraActive() && scanMode() === 'caisse'" (click)="toggleCamera('caisse')">
-              @if (isCameraActive() && scanMode() === 'caisse') {
-                <span>❌ Éteindre la caméra</span>
-              } @else {
-                <span>📸 Lancer le Scanner Photo</span>
-              }
-            </button>
+            <div class="compact-block-header">
+              <h3>Scanner & Saisie</h3>
+              <button type="button" class="compact-cam-toggle" [class.cam-active]="isCameraActive() && scanMode() === 'caisse'" (click)="toggleCamera('caisse')">
+                {{ isCameraActive() && scanMode() === 'caisse' ? '❌ Fermer Caméra' : '📸 Ouvrir Caméra' }}
+              </button>
+            </div>
 
             @if (isCameraActive() && scanMode() === 'caisse') {
-              <div class="camera-wrapper-modern">
+              <div class="camera-wrapper-compact">
                 <video #previewVideo autoplay playsinline muted></video>
-                <div class="scanner-target-zone"></div>
-                <div class="scanner-laser"></div>
+                <div class="scanner-laser-compact"></div>
               </div>
             }
 
-            <div class="search-bar-wrapper">
+            <div class="search-bar-wrapper" style="margin-top: 12px;">
               <span class="search-icon">🔍</span>
               <input
                 #barcodeInput
                 type="text"
-                placeholder="Entrez ou scannez un code-barres..."
+                placeholder="Scanner ou saisir un code..."
                 [(ngModel)]="barcodeInputValue"
                 (keyup.enter)="handleScan()"
               />
@@ -179,7 +174,6 @@ import { CartService } from './cart.service';
           <div class="card premium-block no-print" [class.disabled-opacity]="cartService.cartItems().length === 0">
             <div class="block-indicator amber-dot"></div>
             <h3>Règlement Client</h3>
-            <p class="card-desc">Finalisez la commande pour éditer le ticket de caisse.</p>
             
             <div class="qr-wrapper-modern">
               <div class="qr-box-design">
@@ -192,7 +186,7 @@ import { CartService } from './cart.service';
             </div>
 
             <button type="button" class="checkout-action-btn" [disabled]="cartService.cartItems().length === 0" (click)="checkout()">
-              ✅ Encaisser & Imprimer Ticket
+              ✅ Encaisser & Imprimer
             </button>
           </div>
         </section>
@@ -239,13 +233,12 @@ import { CartService } from './cart.service';
               <div class="card premium-block" style="width: 100%; max-width: 400px; text-align: center; padding: 30px;">
                 <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
                 <h2 style="margin-bottom: 8px;">Espace Administrateur</h2>
-                <p class="card-desc" style="margin-bottom: 20px;">Veuillez saisir le code d'accès secret pour gérer le stock et le catalogue cloud.</p>
                 
                 <div style="display: flex; flex-direction: column; gap: 15px;">
                   <input 
                     type="password" 
                     [(ngModel)]="passwordInput" 
-                    placeholder="Entrez le code secret..." 
+                    placeholder="Code secret..." 
                     style="text-align: center; font-size: 1.2rem; letter-spacing: 6px; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);"
                     (keyup.enter)="verifyPassword()"
                   />
@@ -253,7 +246,7 @@ import { CartService } from './cart.service';
                     <p style="color: #ef4444; font-size: 0.85rem; font-weight: 600; margin: 0;">❌ Code secret incorrect.</p>
                   }
                   <button type="button" class="checkout-action-btn" style="width: 100%;" (click)="verifyPassword()">
-                    Déverrouiller l'accès
+                    Déverrouiller
                   </button>
                 </div>
               </div>
@@ -263,14 +256,13 @@ import { CartService } from './cart.service';
           @else {
             <div class="card-header-full" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
               <div>
-                <h2 style="margin: 0;">⚙️ Panneau d'Administration Général</h2>
-                <p class="card-desc" style="margin: 4px 0 0 0;">Ajout de produits et suivi de la synchronisation cloud</p>
+                <h2 style="margin: 0;">⚙️ Administration Cloud</h2>
               </div>
               <div style="display: flex; gap: 10px; align-items: center;">
                 <span class="history-badge" style="background: #10b981; padding: 6px 12px; font-weight: 600;">
-                  🟢 {{ cartService.productsList().length }} articles synchronisés
+                  🟢 {{ cartService.productsList().length }} articles
                 </span>
-                <button type="button" class="modern-delete-btn" style="padding: 6px 12px; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;" (click)="logoutAdmin()">
+                <button type="button" class="modern-delete-btn" style="padding: 6px 12px; font-size: 0.85rem;" (click)="logoutAdmin()">
                   🔒 Déconnexion
                 </button>
               </div>
@@ -278,51 +270,51 @@ import { CartService } from './cart.service';
 
             <div class="caisse-grid" style="grid-template-columns: 1.1fr 1.9fr; gap: 24px; align-items: start;">
               
-              <div class="card premium-block" style="position: sticky; top: 10px;">
-                <h3 style="margin-top: 0; display: flex; align-items: center; gap: 8px;">📦 Nouveau Produit</h3>
-                <p class="card-desc" style="margin-bottom: 15px;">Capturez directement un code-barres depuis le capteur photo.</p>
+              <div class="card premium-block">
+                <h3 style="margin-top: 0;">📦 Nouveau Produit</h3>
                 
-                <button type="button" class="scan-button-modern" [class.cam-active]="isCameraActive() && scanMode() === 'admin'" (click)="toggleCamera('admin')" style="margin-bottom: 15px;">
-                  {{ isCameraActive() && scanMode() === 'admin' ? '❌ Désactiver la caméra admin' : '📸 Configurer par scan' }}
-                </button>
+                <div class="compact-block-header" style="margin-bottom: 10px;">
+                  <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Lancer le capteur :</span>
+                  <button type="button" class="compact-cam-toggle" [class.cam-active]="isCameraActive() && scanMode() === 'admin'" (click)="toggleCamera('admin')">
+                    {{ isCameraActive() && scanMode() === 'admin' ? '❌ Fermer' : '📸 Activer' }}
+                  </button>
+                </div>
 
                 @if (isCameraActive() && scanMode() === 'admin') {
-                  <div class="camera-wrapper-modern" style="margin-bottom: 15px;">
+                  <div class="camera-wrapper-compact" style="margin-bottom: 12px;">
                     <video #previewVideo autoplay playsinline muted></video>
-                    <div class="scanner-target-zone"></div>
-                    <div class="scanner-laser"></div>
+                    <div class="scanner-laser-compact"></div>
                   </div>
                 }
 
                 <div style="display: flex; flex-direction: column; gap: 14px;">
                   <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 5px;">Code-barres unique</label>
-                    <input type="text" [(ngModel)]="adminBarcode" placeholder="Scannez ou saisissez..." style="font-family: monospace; font-weight: bold; width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);" />
+                    <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px;">Code-barres</label>
+                    <input type="text" [(ngModel)]="adminBarcode" placeholder="ID..." style="font-family: monospace; font-weight: bold; width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);" />
                   </div>
                   <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 5px;">Désignation / Nom</label>
-                    <input type="text" [(ngModel)]="adminName" placeholder="Ex: Chemise Lin Slim Fit..." style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);" />
+                    <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px;">Nom de l'article</label>
+                    <input type="text" [(ngModel)]="adminName" placeholder="Désignation..." style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);" />
                   </div>
                   <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 5px;">Prix de vente (FCFA)</label>
-                    <input type="number" [(ngModel)]="adminPrice" placeholder="Ex: 15000" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);" />
+                    <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px;">Prix de vente (F)</label>
+                    <input type="number" [(ngModel)]="adminPrice" placeholder="Montant..." style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);" />
                   </div>
                   
                   <button type="button" class="checkout-action-btn" style="margin-top: 10px; width: 100%;" (click)="saveProduct()">
-                    💾 Sauvegarder sur Supabase Cloud
+                    💾 Sauvegarder sur Supabase
                   </button>
                 </div>
               </div>
 
               <div class="card premium-block">
-                <h3 style="margin-top: 0; margin-bottom: 5px;">☁️ Catalogue Général (Base Cloud)</h3>
-                <p class="card-desc" style="margin-bottom: 15px;">Voici la liste des produits disponibles pour la vente sur l'application.</p>
+                <h3 style="margin-top: 0; margin-bottom: 15px;">☁️ Catalogue Général</h3>
                 
-                <div class="cart-list" style="max-height: 480px; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 8px;">
+                <div class="cart-list" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
                   @if (cartService.productsList().length === 0) {
                     <div class="empty-state-modern" style="padding: 40px 0;">
                       <span class="empty-icon-emoji">📭</span>
-                      <p>Aucun produit en ligne.</p>
+                      <p>Aucun produit enregistré.</p>
                     </div>
                   } @else {
                     @for (prod of cartService.productsList(); track prod.id) {
@@ -355,48 +347,85 @@ import { CartService } from './cart.service';
     </div>
   `,
   styles: [`
-    /* STYLE DES NOUVEAUX BLOCS MODERNES (Inspiré de l'image 274736.jpg) */
+    /* STYLE DES BLOCS MODERNES */
     .premium-block {
       position: relative;
       border: 1px solid var(--border-color) !important;
-      border-radius: 16px !important; /* Angles adoucis comme sur l'image */
-      padding: 20px !important;
+      border-radius: 16px !important;
+      padding: 18px !important;
       background: var(--bg-card) !important;
-      overflow: hidden;
     }
     
     .block-indicator {
       position: absolute;
       top: 15px;
       right: 15px;
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
     }
-    .indigo-dot { background: #6366f1; box-shadow: 0 0 8px #6366f1; }
-    .emerald-dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
-    .amber-dot { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+    .indigo-dot { background: #6366f1; }
+    .emerald-dot { background: #10b981; }
+    .amber-dot { background: #f59e0b; }
 
-    /* BOUTON SCAN ULTRA-SIMPLE */
-    .scan-button-modern {
-      width: 100%;
-      background: rgba(37, 99, 235, 0.06);
+    /* EN-TÊTE COMPACT POUR LE SCAN */
+    .compact-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .compact-block-header h3 { margin: 0; font-size: 1.1rem; }
+    
+    .compact-cam-toggle {
+      background: var(--primary-light);
       color: #2563eb;
-      border: 1px dashed #2563eb;
-      padding: 12px;
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      padding: 6px 12px;
+      font-size: 0.8rem;
       font-weight: 600;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      margin-bottom: 15px;
       transition: all 0.2s ease;
     }
-    .scan-button-modern:hover {
+    .compact-cam-toggle:hover, .compact-cam-toggle.cam-active {
       background: #2563eb;
       color: #fff;
-      border-style: solid;
     }
 
-    /* BARRE DE RECHERCHE MONOCHROME */
+    /* ZONE DE VISION COMPACTE (BANDEAU HORIZONTAL FIN) */
+    .camera-wrapper-compact {
+      position: relative;
+      width: 100%;
+      height: 90px; /* Taille drastiquement réduite */
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+    }
+    .camera-wrapper-compact video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Recadre pour remplir le petit bandeau */
+    }
+    
+    .scanner-laser-compact {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #ef4444;
+      box-shadow: 0 0 6px #ef4444;
+      animation: laserScanCompact 1.5s infinite ease-in-out;
+    }
+    @keyframes laserScanCompact {
+      0% { top: 15%; }
+      50% { top: 85%; }
+      100% { top: 15%; }
+    }
+
+    /* BARRE DE RECHERCHE */
     .search-bar-wrapper {
       display: flex;
       align-items: center;
@@ -406,15 +435,13 @@ import { CartService } from './cart.service';
       padding: 4px 10px;
       gap: 8px;
     }
-    .dark-theme .search-bar-wrapper {
-      background: rgba(255, 255, 255, 0.03);
-    }
-    .search-icon { color: var(--text-muted); font-size: 1rem; }
+    .dark-theme .search-bar-wrapper { background: rgba(255, 255, 255, 0.03); }
+    .search-icon { color: var(--text-muted); }
     .search-bar-wrapper input {
       flex: 1;
       border: none !important;
       background: transparent !important;
-      padding: 8px 0;
+      padding: 6px 0;
       font-size: 0.95rem;
       color: var(--text-main);
       outline: none;
@@ -429,28 +456,28 @@ import { CartService } from './cart.service';
       cursor: pointer;
     }
 
-    /* STRUCTURE DE LA LISTE DU PANIER */
+    /* LISTE DU PANIER */
     .cart-list-modern {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 15px;
-      max-height: 260px;
+      gap: 8px;
+      margin-top: 10px;
+      max-height: 240px;
       overflow-y: auto;
     }
     .cart-item-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0;
+      padding: 8px 0;
       border-bottom: 1px solid rgba(0,0,0,0.04);
     }
     .item-main-details { display: flex; flex-direction: column; }
     .item-title { font-size: 0.95rem; color: var(--text-main); }
     .item-subtitle { font-size: 0.8rem; color: var(--text-muted); }
     
-    /* COMPTEUR PLUS FIN ET PLUS JOLI */
-    .item-actions-wrapper { display: flex; align-items: center; gap: 12px; }
+    /* COMPTEUR AMÉLIORÉ */
+    .item-actions-wrapper { display: flex; align-items: center; gap: 10px; }
     .modern-counter {
       display: flex;
       align-items: center;
@@ -463,66 +490,65 @@ import { CartService } from './cart.service';
     .counter-btn {
       background: transparent;
       border: none;
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       font-weight: bold;
       color: var(--text-main);
       cursor: pointer;
     }
-    .counter-value { font-size: 0.9rem; font-weight: 600; min-width: 20px; text-align: center; }
+    .counter-value { font-size: 0.9rem; font-weight: 600; min-width: 18px; text-align: center; }
     .modern-delete-btn {
       background: transparent;
       border: none;
       cursor: pointer;
-      font-size: 1rem;
-      padding: 4px;
+      font-size: 0.95rem;
     }
 
-    /* BLOC TOTAL ET QR DESIGN */
+    /* TOTAL ET QR CODE */
     .modern-summary-box {
-      margin-top: 15px;
+      margin-top: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 12px;
+      padding-top: 10px;
       border-top: 1px dashed var(--border-color);
     }
-    .summary-value { font-size: 1.25rem; color: #2563eb; }
+    .summary-value { font-size: 1.2rem; color: #2563eb; }
     
     .qr-wrapper-modern {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 20px 0;
-      gap: 10px;
+      margin: 15px 0;
+      gap: 8px;
     }
     .qr-box-design {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       border: 2px solid var(--border-color);
       border-radius: 12px;
       position: relative;
     }
-    .qr-corner { position: absolute; width: 14px; height: 14px; border: 3px solid #2563eb; }
-    .top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; border-top-left-radius: 6px; }
-    .top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; border-top-right-radius: 6px; }
-    .bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; border-bottom-left-radius: 6px; }
-    .qr-center-dot { position: absolute; top: 43px; left: 43px; width: 14px; height: 14px; background: var(--text-main); border-radius: 3px; }
-    .qr-price-badge { font-family: monospace; font-weight: bold; font-size: 1rem; background: rgba(0,0,0,0.04); padding: 2px 8px; border-radius: 6px; }
+    .qr-corner { position: absolute; width: 12px; height: 12px; border: 3px solid #2563eb; }
+    .top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; border-top-left-radius: 50%; }
+    .top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; border-top-right-radius: 50%; }
+    .bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; border-bottom-left-radius: 50%; }
+    .qr-center-dot { position: absolute; top: 34px; left: 34px; width: 12px; height: 12px; background: var(--text-main); border-radius: 2px; }
+    .qr-price-badge { font-family: monospace; font-weight: bold; font-size: 0.95rem; }
 
     .checkout-action-btn {
       width: 100%;
       background: #2563eb;
       color: #fff;
       border: none;
-      padding: 14px;
-      font-size: 1rem;
+      padding: 12px;
+      font-size: 0.95rem;
       font-weight: 600;
       border-radius: 10px;
       cursor: pointer;
     }
 
-    /* ================= GESTION STRICTE DE L'IMPRESSION DU TICKET REÇU ================= */
+    /* CONFIGURATION STRICTE REÇU IMPRESSION */
     #receipt-print-zone {
       font-family: 'Courier New', Courier, monospace;
       width: 280px;
@@ -531,24 +557,22 @@ import { CartService } from './cart.service';
       color: #000;
       margin: 0 auto;
     }
-    .receipt-header { text-align: center; margin-bottom: 8px; }
-    .receipt-header h2 { font-size: 1.4rem; margin: 0 0 4px 0; font-weight: bold; letter-spacing: 1px; }
-    .receipt-subtitle { font-size: 0.75rem; text-transform: uppercase; margin: 0 0 6px 0; }
-    .receipt-header p { font-size: 0.8rem; margin: 2px 0; }
-    .receipt-divider { text-align: center; font-size: 0.85rem; margin: 6px 0; letter-spacing: -1px; }
-    .receipt-meta p { font-size: 0.8rem; margin: 3px 0; }
-    .receipt-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin: 8px 0; }
+    .receipt-header { text-align: center; margin-bottom: 6px; }
+    .receipt-header h2 { font-size: 1.3rem; margin: 0 0 4px 0; font-weight: bold; }
+    .receipt-subtitle { font-size: 0.7rem; text-transform: uppercase; margin: 0 0 4px 0; }
+    .receipt-header p { font-size: 0.75rem; margin: 2px 0; }
+    .receipt-divider { text-align: center; font-size: 0.8rem; margin: 4px 0; }
+    .receipt-meta p { font-size: 0.75rem; margin: 2px 0; }
+    .receipt-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin: 6px 0; }
     .receipt-table th { font-weight: bold; padding-bottom: 4px; border-bottom: 1px dashed #000; }
-    .receipt-table td { padding: 4px 0; vertical-align: top; }
-    .receipt-total-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.05rem; padding: 4px 0; }
-    .receipt-footer { text-align: center; font-size: 0.8rem; margin-top: 15px; font-style: italic; }
+    .receipt-table td { padding: 3px 0; }
+    .receipt-total-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 1rem; }
+    .receipt-footer { text-align: center; font-size: 0.75rem; margin-top: 12px; font-style: italic; }
 
-    /* Règles d'affichage écran vs papier */
     .print-only { display: none; }
     @media print {
       .no-print { display: none !important; }
       .print-only { display: block !important; }
-      body, html { background: #fff !important; color: #000 !important; }
     }
     .disabled-opacity { opacity: 0.4; pointer-events: none; }
   `]
@@ -560,20 +584,17 @@ export class AppComponent implements AfterViewInit {
   readonly scanMode = signal<'caisse' | 'admin'>('caisse');
   readonly isDarkMode = signal<boolean>(false);
   
-  // Sécurité
   readonly isAdminAuthenticated = signal<boolean>(false);
   passwordInput = '';
   readonly passwordError = signal<boolean>(false);
 
   barcodeInputValue = '';
 
-  // Variables tampons pour mémoriser la vente à imprimer
   lastReceiptItems: any[] = [];
   lastReceiptTotal = 0;
   currentInvoiceId = '';
   currentPrintDate = new Date();
 
-  // Formulaire d'administration
   adminBarcode = '';
   adminName = '';
   adminPrice: number | null = null;
@@ -665,7 +686,7 @@ export class AppComponent implements AfterViewInit {
         }
       );
     } catch (err) {
-      console.error("Erreur d'accès matériel au capteur :", err);
+      console.error("Erreur capteur :", err);
     }
   }
 
@@ -711,7 +732,7 @@ export class AppComponent implements AfterViewInit {
 
   async saveProduct() {
     if (!this.adminBarcode || !this.adminName || !this.adminPrice) {
-      alert("Veuillez remplir tous les champs ou scanner un article.");
+      alert("Veuillez remplir tous les champs.");
       return;
     }
 
@@ -725,27 +746,22 @@ export class AppComponent implements AfterViewInit {
       this.adminBarcode = '';
       this.adminName = '';
       this.adminPrice = null;
-      alert("Article enregistré avec succès sur ton cloud Supabase ! 🚀");
+      alert("Article synchronisé cloud ! 🚀");
     } else {
-      alert("Échec de la synchronisation cloud.");
+      alert("Échec cloud.");
     }
   }
 
   checkout(): void {
-    // 1. Mémoriser les informations de la vente en cours avant de vider le panier
     this.lastReceiptItems = [...this.cartService.cartItems()];
     this.lastReceiptTotal = this.cartService.subtotal();
     this.currentPrintDate = new Date();
     this.currentInvoiceId = 'INV-' + Math.floor(100000 + Math.random() * 900000);
 
-    // 2. Enregistrer la transaction dans le service
     const sale = this.cartService.checkout();
     if (sale) {
       setTimeout(() => {
-        // Lancer la fenêtre d'impression native
         window.print();
-        
-        // Nettoyer et réinitialiser l'interface après impression
         this.cartService.clearCart();
         this.activeTab.set('caisse');
       }, 250);
