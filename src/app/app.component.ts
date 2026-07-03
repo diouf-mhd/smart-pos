@@ -43,7 +43,7 @@ import { CartService } from './cart.service';
       <div id="receipt-print-zone" class="print-only">
         <div class="receipt-header">
           <h2>SHOP</h2>
-          <p class="receipt-subtitle">Produits alimentaire </p>
+          <p class="receipt-subtitle">Produits  </p>
           <p>📍 Dougar ,,Diamniadio, Dakar, Sénégal</p>
           <p>📞 Tel: +221 77 906 11 73</p>
         </div>
@@ -57,7 +57,7 @@ import { CartService } from './cart.service';
         
         <div class="receipt-divider">-----------------------------------------</div>
         
-        <table class="receipt-table">
+        <table class="receipt-tablei">
           <thead>
             <tr>
               <th style="text-align: left;">PRODUIT</th>
