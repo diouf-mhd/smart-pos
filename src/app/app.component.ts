@@ -42,10 +42,10 @@ import { CartService } from './cart.service';
       <!-- ZONE D'IMPRESSION DU REÇU -->
       <div id="receipt-print-zone" class="print-only">
         <div class="receipt-header">
-          <h2>WEUZ.SHOP</h2>
-          <p class="receipt-subtitle">Vêtements Homme & Accessoires de Mode</p>
-          <p>📍 Sacré-Cœur 3, Dakar, Sénégal</p>
-          <p>📞 Tel: +221 77 123 45 67</p>
+          <h2>SHOP</h2>
+          <p class="receipt-subtitle">Produits alimentaire </p>
+          <p>📍 Dougar ,,Diamniadio, Dakar, Sénégal</p>
+          <p>📞 Tel: +221 77 906 11 73</p>
         </div>
         
         <div class="receipt-divider">-----------------------------------------</div>
