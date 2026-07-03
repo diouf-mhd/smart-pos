@@ -13,8 +13,8 @@ import { CartService } from './cart.service';
     <div class="app-shell" [class.dark-theme]="isDarkMode()">
       <header class="topbar">
         <div class="topbar-left">
-          <p class="eyebrow">Système POS Professionnel Cloud</p>
-          <h1>Smart POS ⚡</h1>
+          <p class="eyebrow">Système caisse Professionnel Cloud</p>
+          <h1>La caisse ⚡</h1>
         </div>
         <div class="topbar-actions">
           <button type="button" class="theme-toggle-btn" (click)="toggleTheme()">
@@ -167,70 +167,122 @@ import { CartService } from './cart.service';
         </section>
 
         <section class="panel history-panel slide-view" [class.active]="activeTab() === 'admin'">
-          <div class="card-header-full">
-            <h2>⚙️ Gestion du Stock & Nouveaux Articles</h2>
-            <span class="history-badge" style="background: #10b981;">{{ cartService.productsList().length }} en ligne</span>
-          </div>
-
-          <div class="caisse-grid" style="grid-template-columns: 1.2fr 1.8fr; gap: 20px;">
-            <div class="card">
-              <h3>Enregistrer un article</h3>
-              <p class="card-desc">Activez le scanner ci-dessous, puis scannez le code-barres du produit physique pour remplir le champ automatiquement.</p>
-              
-              <button type="button" class="scan-button" [class.cam-active]="isCameraActive() && scanMode() === 'admin'" (click)="toggleCamera('admin')">
-                {{ isCameraActive() && scanMode() === 'admin' ? '❌ DÉSACTIVER LA CAMÉRA ADMIN' : '📸 SCANNER LE NOUVEAU PRODUIT' }}
-              </button>
-
-              @if (isCameraActive() && scanMode() === 'admin') {
-                <div class="camera-wrapper" style="margin-bottom: 15px;">
-                  <video #previewVideo autoplay playsinline muted></video>
-                  <div class="scanner-target-zone"></div>
-                  <div class="scanner-laser"></div>
-                </div>
-              }
-
-              <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
-                <div>
-                  <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 4px;">Code-barres (Scanné ou écrit) :</label>
-                  <input type="text" [(ngModel)]="adminBarcode" placeholder="En attente du scan ou saisie..." />
-                </div>
-                <div>
-                  <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 4px;">Nom de l'article :</label>
-                  <input type="text" [(ngModel)]="adminName" placeholder="Ex: Cahier 100 pages, Canette..." />
-                </div>
-                <div>
-                  <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 4px;">Prix de vente (FCFA) :</label>
-                  <input type="number" [(ngModel)]="adminPrice" placeholder="Ex: 500" />
-                </div>
+          
+          @if (!isAdminAuthenticated()) {
+            <div style="display: flex; justify-content: center; align-items: center; min-height: 400px; padding: 20px;">
+              <div class="card" style="width: 100%; max-width: 400px; text-align: center; padding: 30px; border-top: 4px solid #2563eb;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
+                <h2 style="margin-bottom: 8px;">Espace Administrateur</h2>
+                <p class="card-desc" style="margin-bottom: 20px;">Veuillez saisir le code d'accès secret pour gérer le stock et le catalogue cloud.</p>
                 
-                <button type="button" class="checkout-btn" style="margin-top: 5px; width: 100%;" (click)="saveProduct()">
-                  💾 Sauvegarder sur Supabase
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                  <input 
+                    type="password" 
+                    [(ngModel)]="passwordInput" 
+                    placeholder="Entrez le code secret..." 
+                    style="text-align: center; font-size: 1.2rem; letter-spacing: 6px; padding: 12px;"
+                    (keyup.enter)="verifyPassword()"
+                  />
+                  @if (passwordError()) {
+                    <p style="color: #ef4444; font-size: 0.85rem; font-weight: 600; margin: 0;">❌ Code secret incorrect.</p>
+                  }
+                  <button type="button" class="checkout-btn" style="width: 100%;" (click)="verifyPassword()">
+                    Déverrouiller l'accès
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+
+          @else {
+            <div class="card-header-full" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <div>
+                <h2 style="margin: 0;">⚙️ Panneau d'Administration Général</h2>
+                <p class="card-desc" style="margin: 4px 0 0 0;">Ajout de produits et suivi de la synchronisation cloud</p>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <span class="history-badge" style="background: #10b981; padding: 6px 12px; font-weight: 600;">
+                  🟢 {{ cartService.productsList().length }} articles synchronisés
+                </span>
+                <button type="button" class="delete-btn" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 6px 12px; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;" (click)="logoutAdmin()">
+                  🔒 Déconnexion
                 </button>
               </div>
             </div>
 
-            <div class="card">
-              <h3>Catalogue de la boutique (Synchronisé Cloud)</h3>
-              <div class="cart-list" style="max-height: 420px; overflow-y: auto; margin-top: 10px; padding-right: 5px;">
-                @for (prod of cartService.productsList(); track prod.id) {
-                  <div class="cart-item" style="padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.08);">
-                    <div class="item-info">
-                      <strong style="font-size: 0.95rem;">{{ prod.name }}</strong>
-                      <div class="small-price" style="font-size: 0.75rem; color: gray;">Code: {{ prod.id }}</div>
-                    </div>
-                    <div style="font-weight: 700; color: #2563eb; font-size: 0.95rem;">{{ prod.price }} FCFA</div>
+            <div class="caisse-grid" style="grid-template-columns: 1.1fr 1.9fr; gap: 24px; align-items: start;">
+              
+              <div class="card" style="border-top: 4px solid #2563eb; position: sticky; top: 10px;">
+                <h3 style="margin-top: 0; display: flex; align-items: center; gap: 8px;">📦 Nouveau Produit</h3>
+                <p class="card-desc" style="margin-bottom: 15px;">Utilisez le bouton ci-dessous pour capturer directement un code-barres depuis le capteur photo.</p>
+                
+                <button type="button" class="scan-button" [class.cam-active]="isCameraActive() && scanMode() === 'admin'" (click)="toggleCamera('admin')" style="margin-bottom: 15px;">
+                  {{ isCameraActive() && scanMode() === 'admin' ? '❌ DÉSACTIVER LA CAMÉRA ADMIN' : '📸 CONFIGURER PAR SCAN CAMÉRA' }}
+                </button>
+
+                @if (isCameraActive() && scanMode() === 'admin') {
+                  <div class="camera-wrapper" style="margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <video #previewVideo autoplay playsinline muted></video>
+                    <div class="scanner-target-zone"></div>
+                    <div class="scanner-laser"></div>
                   </div>
                 }
+
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <div>
+                    <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #6b7280; display: block; margin-bottom: 5px;">Code-barres unique</label>
+                    <input type="text" [(ngModel)]="adminBarcode" placeholder="Scannez ou saisissez manuellement..." style="font-family: monospace; font-weight: bold;" />
+                  </div>
+                  <div>
+                    <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #6b7280; display: block; margin-bottom: 5px;">Désignation / Nom</label>
+                    <input type="text" [(ngModel)]="adminName" placeholder="Ex: Robe d'été fleurie, Sac en cuir..." />
+                  </div>
+                  <div>
+                    <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #6b7280; display: block; margin-bottom: 5px;">Prix de vente (FCFA)</label>
+                    <input type="number" [(ngModel)]="adminPrice" placeholder="Ex: 12500" />
+                  </div>
+                  
+                  <button type="button" class="checkout-btn" style="margin-top: 10px; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px;" (click)="saveProduct()">
+                    <span>💾</span> Sauvegarder sur Supabase Cloud
+                  </button>
+                </div>
               </div>
+
+              <div class="card" style="border-top: 4px solid #10b981;">
+                <h3 style="margin-top: 0; margin-bottom: 5px;">☁️ Catalogue Général (Base Cloud)</h3>
+                <p class="card-desc" style="margin-bottom: 15px;">Voici la liste des produits disponibles pour la vente sur l'application.</p>
+                
+                <div class="cart-list" style="max-height: 480px; overflow-y: auto; padding-right: 5px; gap: 8px;">
+                  @if (cartService.productsList().length === 0) {
+                    <div class="empty-state" style="padding: 40px 0;">
+                      <span class="empty-icon">📭</span>
+                      <p>Aucun produit en ligne dans la base de données.</p>
+                    </div>
+                  } @else {
+                    @for (prod of cartService.productsList(); track prod.id) {
+                      <div class="cart-item" style="padding: 12px; background: rgba(0,0,0,0.02); border-radius: 8px; border: 1px solid rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;">
+                        <div class="item-info">
+                          <strong style="font-size: 0.95rem; color: var(--text-main);">{{ prod.name }}</strong>
+                          <div class="small-price" style="font-size: 0.75rem; color: #9ca3af; font-family: monospace; margin-top: 2px;">Barcode ID: {{ prod.id }}</div>
+                        </div>
+                        <div style="font-weight: 700; color: #2563eb; font-size: 1rem; background: rgba(37, 99, 235, 0.08); padding: 4px 10px; border-radius: 6px;">
+                          {{ prod.price }} F
+                        </div>
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+
             </div>
-          </div>
+          }
         </section>
         
       </div>
 
       <footer class="footer">
         <div class="footer-profile">
-          <strong>Smart POS Mobile & Desktop</strong>
+          <strong>La caisse Mobile & Desktop</strong>
           <p>visiter mon profile : <a href="https://moussadioufportfolio.kesug.com" target="_blank" rel="noopener noreferrer">https://moussadioufportfolio.kesug.com</a></p>
         </div>
       </footer>
@@ -242,9 +294,14 @@ export class AppComponent implements AfterViewInit {
   readonly cartService = inject(CartService);
   readonly activeTab = signal<'caisse' | 'historique' | 'admin'>('caisse');
   readonly isCameraActive = signal<boolean>(false);
-  readonly scanMode = signal<'caisse' | 'admin'>('caisse'); // Cible le scanneur actif
+  readonly scanMode = signal<'caisse' | 'admin'>('caisse');
   readonly isDarkMode = signal<boolean>(false);
   
+  // Variables de gestion de la sécurité Admin
+  readonly isAdminAuthenticated = signal<boolean>(false);
+  passwordInput = '';
+  readonly passwordError = signal<boolean>(false);
+
   barcodeInputValue = '';
 
   // Modèles pour le formulaire d'administration
@@ -280,6 +337,24 @@ export class AppComponent implements AfterViewInit {
     this.isDarkMode.set(!this.isDarkMode());
   }
 
+  // Fonctions de vérification de sécurité
+  verifyPassword(): void {
+    if (this.passwordInput === '2026') {
+      this.isAdminAuthenticated.set(true);
+      this.passwordError.set(false);
+      this.passwordInput = '';
+    } else {
+      this.passwordError.set(true);
+    }
+  }
+
+  logoutAdmin(): void {
+    this.isAdminAuthenticated.set(false);
+    this.stopCameraScanner();
+    this.isCameraActive.set(false);
+    this.activeTab.set('caisse');
+  }
+
   toggleCamera(mode: 'caisse' | 'admin'): void {
     if (this.isCameraActive() && this.scanMode() === mode) {
       this.isCameraActive.set(false);
@@ -293,7 +368,6 @@ export class AppComponent implements AfterViewInit {
     if (!this.previewVideo?.nativeElement) return;
 
     try {
-      // Configuration initiale ultra-nette conservée
       const customConstraints: MediaStreamConstraints = {
         video: {
           facingMode: { ideal: 'environment' },
@@ -311,15 +385,13 @@ export class AppComponent implements AfterViewInit {
             const decodedText = result.getText().trim();
             
             if (this.scanMode() === 'caisse') {
-              // Comportement standard à la caisse
               const product = this.cartService.scanProduct(decodedText);
               if (!product) {
                 alert(`Code scanné inconnu : ${decodedText}`);
               }
             } else {
-              // Comportement sur la page Admin : on injecte le code dans le formulaire
               this.adminBarcode = decodedText;
-              this.isCameraActive.set(false); // Désactive la caméra pour remplir tranquillement le nom et prix
+              this.isCameraActive.set(false);
             }
           }
         }
@@ -383,7 +455,6 @@ export class AppComponent implements AfterViewInit {
     });
 
     if (success) {
-      // Nettoyage complet des champs après l'envoi cloud réussi
       this.adminBarcode = '';
       this.adminName = '';
       this.adminPrice = null;
