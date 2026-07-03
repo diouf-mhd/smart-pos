@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // 1. On définit la structure d'un produit
 export interface Product {
@@ -15,31 +16,73 @@ export interface CartItem extends Product {
   providedIn: 'root'
 })
 export class CartService {
-  // 2. LE CATALOGUE DU CLIENT : C'est ici que tu mets les produits qu'il te donne !
-  private productCatalog: Product[] = [
-    { id: '6043000034907', name: 'creme de peau Happy family', price: 1500 },
-    { id: '6987000861005', name: 'Cahier 100 pages', price: 250 },
-    { id: '333333', name: 'Café Touba Sac', price: 1000 },
-    { id: '444444', name: 'Lait en poudre Presto', price: 2500 },
-    // Quand ton client te donne sa liste, tu as juste à ajouter des lignes ici :
-    // { id: 'CODE_BARRE_DU_PRODUIT', name: 'NOM_DU_PRODUIT', price: PRIX_FCFA }
-  ];
+  // Initialisation du client Supabase avec tes identifiants cloud
+  private supabase: SupabaseClient = createClient(
+    'https://oyiiwzbmmsewjwrzjfpd.supabase.co',
+    'sb_publishable_uJnDx-se2jUqGkht6_Rh2A_Vcfddy8D'
+  );
 
-  // Les Signals pour la gestion d'état Angular
+  // Le catalogue dynamique : chargé depuis Supabase au lieu d'être écrit en dur
+  readonly productsList = signal<Product[]>([]);
+
+  // Les Signals pour la gestion d'état du panier et des ventes
   readonly cartItems = signal<CartItem[]>([]);
   readonly salesHistory = signal<any[]>([]);
 
-  // Calculs automatiques du total
+  // Calculs automatiques du total (Tes computed optimisés restent inchangés)
   readonly totalItems = computed(() => this.cartItems().reduce((acc, item) => acc + item.quantity, 0));
   readonly subtotal = computed(() => this.cartItems().reduce((acc, item) => acc + (item.price * item.quantity), 0));
 
-  // Fonction appelée par ton composant lors d'un scan caméra ou douchette
+  constructor() {
+    // Au démarrage de l'application, on télécharge le catalogue depuis le cloud
+    this.fetchProductsFromSupabase();
+  }
+
+  // 1. Charger dynamiquement les produits depuis Supabase
+  async fetchProductsFromSupabase(): Promise<void> {
+    try {
+      const { data, error } = await this.supabase
+        .from('products')
+        .select('id, name, price');
+
+      if (error) throw error;
+
+      if (data) {
+        this.productsList.set(data as Product[]);
+      }
+    } catch (err) {
+      console.error('Erreur lors de la récupération des produits Supabase:', err);
+    }
+  }
+
+  // 2. Ajouter ou mettre à jour un produit dans Supabase (Action appelée par ta page Admin)
+  async saveProductToSupabase(newProduct: Product): Promise<boolean> {
+    try {
+      const { error } = await this.supabase
+        .from('products')
+        .upsert({ 
+          id: newProduct.id, 
+          name: newProduct.name, 
+          price: newProduct.price 
+        });
+
+      if (error) throw error;
+
+      // On rafraîchit immédiatement la liste locale pour que la caisse soit au courant du nouveau produit
+      await this.fetchProductsFromSupabase();
+      return true;
+    } catch (err) {
+      console.error("Erreur d'enregistrement Supabase :", err);
+      return false;
+    }
+  }
+
+  // 3. Fonction appelée lors d'un scan caméra ou douchette à la caisse
   scanProduct(barcode: string): Product | null {
-    // On cherche le code-barres dans le catalogue du client
-    const product = this.productCatalog.find(p => p.id === barcode);
+    // On cherche maintenant le code-barres dans la liste dynamique de Supabase
+    const product = this.productsList().find(p => p.id === barcode);
 
     if (product) {
-      // Si le produit existe, on l'ajoute ou on augmente la quantité dans le panier
       this.cartItems.update(items => {
         const existing = items.find(i => i.id === product.id);
         if (existing) {
@@ -50,7 +93,7 @@ export class CartService {
       return product;
     }
 
-    // Si le code n'est pas dans le catalogue
+    // Si le code n'est pas encore enregistré dans Supabase
     return null;
   }
 
@@ -70,7 +113,7 @@ export class CartService {
 
     this.salesHistory.update(history => [newSale, ...history]);
     
-    // On ne vide pas tout de suite le panier ici pour pouvoir l'imprimer juste après !
+    // On ne vide pas tout de suite pour permettre l'impression du reçu
     return newSale;
   }
   
