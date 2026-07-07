@@ -3,6 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } from '@zxing/library';
 import { CartService } from './cart.service';
+import { jsPDF } from 'jspdf'; // 👈 IMPORTATION DE JSPDF
 
 @Component({
   selector: 'app-root',
@@ -44,46 +45,18 @@ import { CartService } from './cart.service';
         </div>
       </nav>
 
-      <div id="receipt-print-zone" class="print-only">
-        <div class="receipt-header">
-          <h2>WEUZ.SHOP</h2>
-          <p class="receipt-subtitle">Vêtements Homme & Accessoires</p>
-          <p>📍 Sacré-Cœur 3, Dakar, Sénégal</p>
-          <p>📞 Tel: +221 77 123 45 67</p>
-        </div>
-        <div class="receipt-divider">-----------------------------------------</div>
-        <div class="receipt-meta">
-          <p><strong>Date :</strong> {{ currentPrintDate | date:'dd/MM/yyyy HH:mm' }}</p>
-          <p><strong>Ticket N° :</strong> {{ currentInvoiceId }}</p>
-        </div>
-        <div class="receipt-divider">-----------------------------------------</div>
-        <table class="receipt-table">
-          <thead>
-            <tr>
-              <th style="text-align: left;">PRODUIT</th>
-              <th style="text-align: center;">QTÉ</th>
-              <th style="text-align: right;">PRIX</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of lastReceiptItems; track item.id) {
-              <tr>
-                <td style="text-align: left;">{{ item.name }} @if(item.unit && item.unit !== 'U'){({{item.unit}})}</td>
-                <td style="text-align: center;">x{{ item.quantity }}</td>
-                <td style="text-align: right;">{{ item.price * item.quantity }} F</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-        <div class="receipt-divider">-----------------------------------------</div>
-        <div class="receipt-total-row">
-          <span>TOTAL PAYÉ</span>
-          <strong>{{ lastReceiptTotal }} FCFA</strong>
-        </div>
-        <div class="receipt-divider">-----------------------------------------</div>
-        <div class="receipt-footer">
-          <p>Merci pour votre confiance ! À bientôt.</p>
-          <p>Suivez-nous sur Weuz.Shop ✨</p>
+      <div *ngIf="showReceiptModal" class="receipt-modal-overlay no-print">
+        <div class="receipt-modal-card">
+          <h3>🎉 Vente validée avec succès !</h3>
+          <p>Le ticket de caisse est prêt.</p>
+          <div class="modal-actions">
+            <button type="button" class="download-pdf-btn" (click)="generateReceiptPDF()">
+              📄 Télécharger le Ticket PDF
+            </button>
+            <button type="button" class="close-modal-btn" (click)="closeReceiptModal()">
+              Continuer la vente
+            </button>
+          </div>
         </div>
       </div>
 
@@ -146,7 +119,7 @@ import { CartService } from './cart.service';
 
             <div class="sheet-footer-action">
               <button type="button" class="sheet-checkout-btn" [disabled]="cartService.cartItems().length === 0" (click)="checkout()">
-                🛒 Valider l'encaissement ({{ cartService.subtotal() }} F)
+                ⚡ Valider l'encaissement ({{ cartService.subtotal() }} F)
               </button>
             </div>
           </div>
@@ -311,40 +284,14 @@ import { CartService } from './cart.service';
     .footer { text-align: center; padding: 8px; font-size: 0.75rem; border-top: 1px solid var(--border-color); }
     .footer a { color: #2563eb; text-decoration: none; }
     
-    /* STYLE STABLE DU REÇU THERMIQUE */
-    #receipt-print-zone { font-family: monospace; width: 280px; padding: 10px; background: #fff; color: #000; text-align: left; }
-    .receipt-header { text-align: center; }
-    .receipt-subtitle { font-size: 0.8rem; margin: 2px 0; }
-    .receipt-divider { text-align: center; margin: 5px 0; }
-    .receipt-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .receipt-total-row { display: flex; justify-content: space-between; font-size: 1.1rem; padding-top: 4px; }
-    .receipt-footer { text-align: center; font-size: 0.85rem; margin-top: 10px; }
+    /* MODAL DE CONFIRMATION DESIGN */
+    .receipt-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
+    .receipt-modal-card { background: var(--bg-cards); padding: 24px; border-radius: 16px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid var(--border-color); }
+    .modal-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .download-pdf-btn { background: #10b981; color: white; padding: 12px; border: none; border-radius: 10px; font-weight: bold; font-size: 0.95rem; cursor: pointer; }
+    .close-modal-btn { background: transparent; color: var(--text-muted); padding: 10px; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; font-size: 0.9rem; }
 
-    .print-only { display: none; }
-
-    /* ================= AJUSTEMENT TECHNIQUE POUR LE CENTRAGE DE L'IMPRESSION ================= */
-    @media print { 
-      .no-print { display: none !important; } 
-      .print-only { display: block !important; }
-      
-      /* Force le body à se comporter comme un container flex centré verticalement et horizontalement */
-      body, html {
-        background: #fff !important;
-        color: #000 !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        min-height: 100vh !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      
-      #receipt-print-zone {
-        margin: auto !important; /* Maintient le reçu parfaitement au milieu */
-        border: none !important;
-        box-shadow: none !important;
-      }
-    }
+    .no-print { display: block; }
   `]
 })
 export class AppComponent implements AfterViewInit {
@@ -361,6 +308,8 @@ export class AppComponent implements AfterViewInit {
   adminPrice: number | null = null;
   adminUnit = 'U';
 
+  // Gestion de la modal après encaissement
+  showReceiptModal = false;
   lastReceiptItems: any[] = [];
   lastReceiptTotal = 0;
   currentInvoiceId = '';
@@ -383,7 +332,7 @@ export class AppComponent implements AfterViewInit {
       this.stopCamera(); 
       
       setTimeout(() => {
-        if (tab === 'caisse') {
+        if (tab === 'caisse' && !this.showReceiptModal) {
           this.startScannerCamera(this.previewVideo?.nativeElement, false);
         } else if (tab === 'admin' && this.isAdminAuthenticated()) {
           this.startScannerCamera(this.adminVideo?.nativeElement, true);
@@ -503,6 +452,7 @@ export class AppComponent implements AfterViewInit {
     this.adminUnit = 'U';
   }
 
+  // 1. Déclencheur à la validation : sauvegarde des données et ouverture de l'option PDF
   checkout(): void {
     this.lastReceiptItems = [...this.cartService.cartItems()];
     this.lastReceiptTotal = this.cartService.subtotal();
@@ -511,10 +461,96 @@ export class AppComponent implements AfterViewInit {
 
     const sale = this.cartService.checkout();
     if (sale) {
-      setTimeout(() => {
-        window.print();
-        this.cartService.clearCart();
-      }, 250);
+      this.stopCamera(); // Coupe le flux caméra
+      this.showReceiptModal = true; // Affiche l'écran de téléchargement
     }
+  }
+
+  // 2. GÉNÉRATEUR DE TICKET PDF PROPRE (Format Ticket Thermique 80mm)
+  generateReceiptPDF(): void {
+    // Largeur fixe standard de 80mm, hauteur proportionnelle au nombre d'articles
+    const baseHeight = 90; 
+    const dynamicHeight = baseHeight + (this.lastReceiptItems.length * 8);
+    
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: [80, dynamicHeight]
+    });
+
+    doc.setFont('Courier', 'bold');
+    
+    // Header
+    doc.setFontSize(14);
+    doc.text('WEUZ.SHOP', 40, 10, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setFont('Courier', 'normal');
+    doc.text('Vêtements Homme & Accessoires', 40, 14, { align: 'center' });
+    doc.text('📍 Sacré-Cœur 3, Dakar', 40, 18, { align: 'center' });
+    doc.text('📞 Tel: +221 77 123 45 67', 40, 22, { align: 'center' });
+    
+    doc.text('-------------------------------------------', 40, 26, { align: 'center' });
+    
+    // Métadonnées
+    const dateStr = this.currentPrintDate.toLocaleDateString('fr-FR') + ' ' + this.currentPrintDate.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+    doc.text(`Date : ${dateStr}`, 6, 31);
+    doc.text(`Ticket N° : ${this.currentInvoiceId}`, 6, 35);
+    
+    doc.text('-------------------------------------------', 40, 40, { align: 'center' });
+    
+    // En-tête Tableau
+    doc.setFont('Courier', 'bold');
+    doc.text('PRODUIT', 6, 45);
+    doc.text('QTE', 46, 45);
+    doc.text('PRIX', 74, 45, { align: 'right' });
+    doc.text('-------------------------------------------', 40, 48, { align: 'center' });
+
+    // Articles dynamiques
+    doc.setFont('Courier', 'normal');
+    let currentY = 53;
+    
+    this.lastReceiptItems.forEach((item) => {
+      const unitLabel = item.unit && item.unit !== 'U' ? ` (${item.unit})` : '';
+      let displayName = item.name + unitLabel;
+      
+      // Tronquer le nom s'il est trop long pour le ticket de 80mm
+      if (displayName.length > 20) displayName = displayName.substring(0, 18) + '..';
+
+      doc.text(displayName, 6, currentY);
+      doc.text(`x${item.quantity}`, 47, currentY);
+      doc.text(`${item.price * item.quantity} F`, 74, currentY, { align: 'right' });
+      currentY += 7;
+    });
+
+    doc.text('-------------------------------------------', 40, currentY, { align: 'center' });
+    currentY += 5;
+
+    // Total Récapitulatif
+    doc.setFont('Courier', 'bold');
+    doc.setFontSize(10);
+    doc.text('TOTAL PAYÉ', 6, currentY);
+    doc.text(`${this.lastReceiptTotal} FCFA`, 74, currentY, { align: 'right' });
+    
+    doc.setFontSize(8);
+    doc.setFont('Courier', 'normal');
+    currentY += 6;
+    doc.text('-------------------------------------------', 40, currentY, { align: 'center' });
+    
+    // Footer
+    currentY += 5;
+    doc.text('Merci pour votre confiance ! À bientôt.', 40, currentY, { align: 'center' });
+    currentY += 4;
+    doc.text('Suivez-nous sur Weuz.Shop ✨', 40, currentY, { align: 'center' });
+
+    // Sauvegarde & Téléchargement instantané
+    doc.save(`Ticket_${this.currentInvoiceId}.pdf`);
+    
+    this.closeReceiptModal();
+  }
+
+  closeReceiptModal(): void {
+    this.showReceiptModal = false;
+    this.cartService.clearCart();
+    this.ensureCameraOnLaunch(); // Relance le scanner de caisse
   }
 }
