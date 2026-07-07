@@ -482,11 +482,11 @@ export class AppComponent implements AfterViewInit {
     
     // Header
     doc.setFontSize(14);
-    doc.text('WEUZ.SHOP', 40, 10, { align: 'center' });
+    doc.text('SHOP', 40, 10, { align: 'center' });
     doc.setFontSize(8);
     doc.setFont('Courier', 'normal');
     doc.text('Vêtements Homme & Accessoires', 40, 14, { align: 'center' });
-    doc.text('📍 Sacré-Cœur 3, Dakar', 40, 18, { align: 'center' });
+    doc.text('📍 Dougar ,Diamniadio, Dakar', 40, 18, { align: 'center' });
     doc.text('📞 Tel: +221 77 123 45 67', 40, 22, { align: 'center' });
     
     doc.text('-------------------------------------------', 40, 26, { align: 'center' });
@@ -540,7 +540,7 @@ export class AppComponent implements AfterViewInit {
     currentY += 5;
     doc.text('Merci pour votre confiance ! À bientôt.', 40, currentY, { align: 'center' });
     currentY += 4;
-    doc.text('Suivez-nous sur Weuz.Shop ✨', 40, currentY, { align: 'center' });
+    doc.text('Suivez-nous sur ....? ✨', 40, currentY, { align: 'center' });
 
     // Sauvegarde & Téléchargement instantané
     doc.save(`Ticket_${this.currentInvoiceId}.pdf`);
