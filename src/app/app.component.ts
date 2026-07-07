@@ -46,10 +46,10 @@ import { CartService } from './cart.service';
 
       <div id="receipt-print-zone" class="print-only">
         <div class="receipt-header">
-          <h2>WEUZ.SHOP</h2>
-          <p class="receipt-subtitle">Vêtements Homme & Accessoires</p>
-          <p>📍 Sacré-Cœur 3, Dakar, Sénégal</p>
-          <p>📞 Tel: +221 77 123 45 67</p>
+          <h2>SHOP</h2>
+          <p class="receipt-subtitle">Produits </p>
+          <p>📍 Dougar, DIamnoadio, Dakar, Sénégal</p>
+          <p>📞 Tel: +221 77 906 11 73</p>
         </div>
         <div class="receipt-divider">-----------------------------------------</div>
         <div class="receipt-meta">
@@ -83,7 +83,7 @@ import { CartService } from './cart.service';
         <div class="receipt-divider">-----------------------------------------</div>
         <div class="receipt-footer">
           <p>Merci pour votre confiance ! À bientôt.</p>
-          <p>Suivez-nous sur Weuz.Shop ✨</p>
+          <p>Suivez-nous sur ....? ✨</p>
         </div>
       </div>
 
