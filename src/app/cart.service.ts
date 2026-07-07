@@ -6,6 +6,7 @@ export interface Product {
   id: string;    // Le code-barres (ex: '111111')
   name: string;  // Le nom de l'article
   price: number; // Le prix en FCFA
+  unit?: string;
 }
 
 export interface CartItem extends Product {

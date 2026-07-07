@@ -12,7 +12,6 @@ import { CartService } from './cart.service';
   template: `
     <div class="app-shell" [class.dark-theme]="isDarkMode()">
       
-      <!-- EN-TÊTE PREMIUM DISCRET -->
       <header class="topbar no-print">
         <div class="topbar-left">
           <h1>La Caisse <span class="accent-bolt">⚡</span></h1>
@@ -24,7 +23,6 @@ import { CartService } from './cart.service';
         </div>
       </header>
 
-      <!-- 1. NAVIGATION DYNAMIQUE AVEC LUMIÈRE AMBIANTE -->
       <nav class="dynamic-nav-container no-print">
         <div class="segmented-control" [attr.data-active-tab]="activeTab()">
           <div class="nav-slider"></div>
@@ -46,7 +44,6 @@ import { CartService } from './cart.service';
         </div>
       </nav>
 
-      <!-- REÇU THERMIQUE DE VENTE -->
       <div id="receipt-print-zone" class="print-only">
         <div class="receipt-header">
           <h2>WEUZ.SHOP</h2>
@@ -71,7 +68,7 @@ import { CartService } from './cart.service';
           <tbody>
             @for (item of lastReceiptItems; track item.id) {
               <tr>
-                <td style="text-align: left;">{{ item.name }} {{ item.unit && item.unit !== 'U' ? '('+item.unit+')' : '' }}</td>
+                <td style="text-align: left;">{{ item.name }} @if(item.unit && item.unit !== 'U'){({{item.unit}})}</td>
                 <td style="text-align: center;">x{{ item.quantity }}</td>
                 <td style="text-align: right;">{{ item.price * item.quantity }} F</td>
               </tr>
@@ -92,7 +89,6 @@ import { CartService } from './cart.service';
 
       <div class="view-container">
         
-        <!-- ================= ONGLET 1 : CAISSE ================= -->
         <section class="panel caisse-fullscreen-layout slide-view" [class.active]="activeTab() === 'caisse'">
           <div class="scanner-upper-section no-print">
             <video #previewVideo autoplay playsinline muted></video>
@@ -127,7 +123,12 @@ import { CartService } from './cart.service';
                   <div class="sheet-item-row">
                     <div class="item-info">
                       <span class="item-name">{{ item.name }}</span>
-                      <span class="item-price">{{ item.price }} F <small class="text-muted" @if(item.unit && item.unit !== 'U'){>/ {{item.unit}}}</small></span>
+                      <span class="item-price">
+                        {{ item.price }} F
+                        @if (item.unit && item.unit !== 'U') {
+                          <small class="text-muted">/ {{ item.unit }}</small>
+                        }
+                      </span>
                     </div>
                     
                     <div class="item-actions">
@@ -151,7 +152,6 @@ import { CartService } from './cart.service';
           </div>
         </section>
 
-        <!-- ================= ONGLET 2 : HISTORIQUE ================= -->
         <section class="panel history-panel slide-view no-print" [class.active]="activeTab() === 'historique'">
           <div class="card-header-full">
             <h2>Transactions terminées</h2>
@@ -171,7 +171,6 @@ import { CartService } from './cart.service';
           </div>
         </section>
 
-        <!-- ================= ONGLET 3 : ADMIN (AMÉLIORÉ AVEC SCAN INTÉGRÉ) ================= -->
         <section class="panel caisse-fullscreen-layout slide-view no-print" [class.active]="activeTab() === 'admin'">
           @if (!isAdminAuthenticated()) {
             <div class="admin-lock-screen" style="width:100%; padding:20px;">
@@ -179,7 +178,6 @@ import { CartService } from './cart.service';
               <button type="button" class="sheet-checkout-btn" (click)="verifyPassword()">Déverrouiller</button>
             </div>
           } @else {
-            <!-- CAMÉRA DE SCAN POUR L'ENREGISTREMENT -->
             <div class="scanner-upper-section">
               <video #adminVideo autoplay playsinline muted></video>
               <div class="scanner-target-box admin-mode">
@@ -191,7 +189,6 @@ import { CartService } from './cart.service';
               </div>
             </div>
 
-            <!-- FORMULAIRE D'AJOUT PRODUIT SOUS FORME DE FEUILLE -->
             <div class="items-lower-sheet">
               <div class="sheet-header">
                 <h3>📦 Nouvel Article Cloud</h3>
@@ -199,19 +196,16 @@ import { CartService } from './cart.service';
               </div>
 
               <div class="sheet-scrolled-list" style="padding-top: 5px;">
-                <!-- Champ Code barre automatique -->
                 <div class="input-group">
                   <label>Code-barres capturé</label>
                   <input type="text" [(ngModel)]="adminBarcode" placeholder="Scannez un article pour remplir..." class="admin-input-field" readonly />
                 </div>
 
-                <!-- Nom de l'article -->
                 <div class="input-group">
                   <label>Désignation / Nom</label>
                   <input type="text" [(ngModel)]="adminName" placeholder="Ex: T-Shirt Nike Tech, Mangue..." class="admin-input-field" />
                 </div>
 
-                <!-- Unité de mesure facultative -->
                 <div class="input-group">
                   <label>Unité de mesure (Facultatif)</label>
                   <div class="unit-selector">
@@ -222,7 +216,6 @@ import { CartService } from './cart.service';
                   </div>
                 </div>
 
-                <!-- Prix -->
                 <div class="input-group">
                   <label>Prix de vente (FCFA)</label>
                   <input type="number" [(ngModel)]="adminPrice" placeholder="Ex: 500 ou 15000" class="admin-input-field" />
@@ -241,7 +234,6 @@ import { CartService } from './cart.service';
         
       </div>
 
-      <!-- FOOTER APPS GÉNÉRAL -->
       <footer class="footer no-print">
         <div class="footer-profile">
           <strong>La Caisse Cloud ⚡</strong>
@@ -252,7 +244,6 @@ import { CartService } from './cart.service';
     </div>
   `,
   styles: [`
-    /* SYSTEM VARIABLES */
     :root {
       --bg-shell: #ffffff; --bg-panels: #f8fafc; --bg-cards: #ffffff;
       --text-main: #0f172a; --text-muted: #64748b; --border-color: #e2e8f0;
@@ -268,7 +259,6 @@ import { CartService } from './cart.service';
     .topbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px 5px 20px; }
     .theme-toggle-btn { background: var(--nav-bg); border: 1px solid var(--border-color); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    /* DYNAMIC NAV WITH GLOW AMBIENT */
     .dynamic-nav-container { padding: 10px 20px; }
     .segmented-control { position: relative; display: flex; background: var(--nav-bg); padding: 4px; border-radius: 30px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px var(--nav-glow); isolation: isolate; }
     .nav-tab-btn { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: transparent; border: none; padding: 12px 5px; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); cursor: pointer; z-index: 2; transition: color 0.3s ease; }
@@ -278,13 +268,11 @@ import { CartService } from './cart.service';
     .segmented-control[data-active-tab="historique"] .nav-slider { transform: translateX(100%); }
     .segmented-control[data-active-tab="admin"] .nav-slider { transform: translateX(200%); }
 
-    /* LAYOUT SCREEN STABLE */
     .view-container { flex: 1; padding: 15px; }
     .panel { display: none; }
     .panel.active { display: flex; }
     .caisse-fullscreen-layout { flex-direction: column; height: calc(100vh - 190px); margin: -15px; overflow: hidden; }
 
-    /* CAMÉRA HAUT */
     .scanner-upper-section { position: relative; height: 36%; background: #000; overflow: hidden; }
     .scanner-upper-section video { width: 100%; height: 100%; object-fit: cover; }
     .scanner-target-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 180px; height: 110px; pointer-events: none; }
@@ -295,10 +283,9 @@ import { CartService } from './cart.service';
 
     .scan-status-overlay { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; border: 1px solid #f59e0b; }
     .camera-floating-controls { position: absolute; right: 12px; top: 12px; }
-    .control-circle-btn { padding: 8px 14px; border-radius: 20px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
+    .control-circle-btn { padding: 8px 14px; border-radius: 20px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
     .control-circle-btn.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
 
-    /* FEUILLE BASSE FORMULAIRES */
     .items-lower-sheet { flex: 1; background: var(--bg-panels); border-top-left-radius: 24px; border-top-right-radius: 24px; display: flex; flex-direction: column; padding: 18px; overflow: hidden; }
     .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .sheet-price-total { font-size: 1.3rem; font-weight: 800; color: #2563eb; }
@@ -311,12 +298,10 @@ import { CartService } from './cart.service';
     .sheet-checkout-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; }
     .sheet-checkout-btn:disabled { opacity: 0.4; pointer-events: none; }
 
-    /* CHAMPS DE FORMULAIRES DESIGN */
     .input-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
     .input-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
     .admin-input-field { width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-shell); color: var(--text-main); border: 1px solid var(--border-color); font-size: 0.9rem; }
     
-    /* UNIT SELECTOR BUTTONS */
     .unit-selector { display: flex; gap: 6px; }
     .unit-selector button { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-cards); color: var(--text-main); font-weight: 600; cursor: pointer; font-size: 0.8rem; }
     .unit-selector button.selected { background: #f59e0b; color: #000; border-color: #f59e0b; }
@@ -339,11 +324,10 @@ export class AppComponent implements AfterViewInit {
   readonly isAdminAuthenticated = signal<boolean>(false);
   passwordInput = '';
 
-  // Variables du Formulaire Admin
   adminBarcode = '';
   adminName = '';
   adminPrice: number | null = null;
-  adminUnit = 'U'; // Valeur par défaut : Pièce (U)
+  adminUnit = 'U';
 
   lastReceiptItems: any[] = [];
   lastReceiptTotal = 0;
@@ -362,10 +346,9 @@ export class AppComponent implements AfterViewInit {
     hints.set(DecodeHintType.TRY_HARDER, true);
     this.codeReader.hints = hints;
 
-    // Déclencheur réactif pour démarrer la bonne caméra selon l'onglet
     effect(() => {
       const tab = this.activeTab();
-      this.stopCamera(); // Coupe l'ancienne caméra avant d'ouvrir la nouvelle
+      this.stopCamera(); 
       
       setTimeout(() => {
         if (tab === 'caisse') {
@@ -399,7 +382,6 @@ export class AppComponent implements AfterViewInit {
     if (this.passwordInput === '2026') {
       this.isAdminAuthenticated.set(true);
       this.passwordInput = '';
-      // Force l'initialisation de la caméra admin après auth
       setTimeout(() => this.startScannerCamera(this.adminVideo?.nativeElement, true), 100);
     }
   }
@@ -409,7 +391,6 @@ export class AppComponent implements AfterViewInit {
     this.setActiveTab('caisse');
   }
 
-  // Caméra Générique pour Caisse ET Administration
   async startScannerCamera(videoElement: HTMLVideoElement, isAdminMode: boolean): Promise<void> {
     if (!videoElement) return;
     try {
@@ -424,9 +405,9 @@ export class AppComponent implements AfterViewInit {
           if (result) {
             const decodedText = result.getText().trim();
             if (isAdminMode) {
-              this.adminBarcode = decodedText; // Auto-remplit le formulaire admin
+              this.adminBarcode = decodedText;
             } else {
-              this.cartService.scanProduct(decodedText); // Ajoute au panier de caisse
+              this.cartService.scanProduct(decodedText);
             }
           }
         }
@@ -475,17 +456,15 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  // Sauvegarde Cloud avec unité de mesure personnalisée
   async saveProduct() {
     if (!this.adminBarcode || !this.adminName || !this.adminPrice) return;
     await this.cartService.saveProductToSupabase({
       id: this.adminBarcode.trim(),
       name: this.adminName.trim(),
       price: this.adminPrice,
-      unit: this.adminUnit // Sauvegarde le kg, g, L ou U
+      unit: this.adminUnit
     });
     
-    // Reset du formulaire après succès
     this.adminBarcode = ''; 
     this.adminName = ''; 
     this.adminPrice = null;
