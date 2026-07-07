@@ -46,10 +46,10 @@ import { CartService } from './cart.service';
 
       <div id="receipt-print-zone" class="print-only">
         <div class="receipt-header">
-          <h2>SHOP</h2>
-          <p class="receipt-subtitle">Produits </p>
-          <p>📍 Dougar, DIamnoadio, Dakar, Sénégal</p>
-          <p>📞 Tel: +221 77 906 11 73</p>
+          <h2>WEUZ.SHOP</h2>
+          <p class="receipt-subtitle">Vêtements Homme & Accessoires</p>
+          <p>📍 Sacré-Cœur 3, Dakar, Sénégal</p>
+          <p>📞 Tel: +221 77 123 45 67</p>
         </div>
         <div class="receipt-divider">-----------------------------------------</div>
         <div class="receipt-meta">
@@ -83,7 +83,7 @@ import { CartService } from './cart.service';
         <div class="receipt-divider">-----------------------------------------</div>
         <div class="receipt-footer">
           <p>Merci pour votre confiance ! À bientôt.</p>
-          <p>Suivez-nous sur ....? ✨</p>
+          <p>Suivez-nous sur Weuz.Shop ✨</p>
         </div>
       </div>
 
@@ -310,9 +310,41 @@ import { CartService } from './cart.service';
     .logout-btn { margin-top: 8px; background: none; border: none; color: #ef4444; width: 100%; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
     .footer { text-align: center; padding: 8px; font-size: 0.75rem; border-top: 1px solid var(--border-color); }
     .footer a { color: #2563eb; text-decoration: none; }
-    #receipt-print-zone { font-family: monospace; width: 280px; padding: 10px; background: #fff; color: #000; }
+    
+    /* STYLE STABLE DU REÇU THERMIQUE */
+    #receipt-print-zone { font-family: monospace; width: 280px; padding: 10px; background: #fff; color: #000; text-align: left; }
+    .receipt-header { text-align: center; }
+    .receipt-subtitle { font-size: 0.8rem; margin: 2px 0; }
+    .receipt-divider { text-align: center; margin: 5px 0; }
+    .receipt-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .receipt-total-row { display: flex; justify-content: space-between; font-size: 1.1rem; padding-top: 4px; }
+    .receipt-footer { text-align: center; font-size: 0.85rem; margin-top: 10px; }
+
     .print-only { display: none; }
-    @media print { .no-print { display: none !important; } .print-only { display: block !important; } }
+
+    /* ================= AJUSTEMENT TECHNIQUE POUR LE CENTRAGE DE L'IMPRESSION ================= */
+    @media print { 
+      .no-print { display: none !important; } 
+      .print-only { display: block !important; }
+      
+      /* Force le body à se comporter comme un container flex centré verticalement et horizontalement */
+      body, html {
+        background: #fff !important;
+        color: #000 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        min-height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      #receipt-print-zone {
+        margin: auto !important; /* Maintient le reçu parfaitement au milieu */
+        border: none !important;
+        box-shadow: none !important;
+      }
+    }
   `]
 })
 export class AppComponent implements AfterViewInit {
